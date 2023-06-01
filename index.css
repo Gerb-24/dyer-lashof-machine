@@ -1,0 +1,31 @@
+.f2-module {
+    display: flex;
+    flex-direction: column;
+  }
+
+.input-field {
+display: flex;
+flex-direction: column;
+}
+
+.degree {
+    display: flex;
+    flex-direction: row;
+    display: inline-block
+}
+
+.btn {
+    background-color: #fff;
+    margin: 2px;
+    font-size: 12px;
+    border: 1px solid #999;
+    border-radius: 5px;
+}
+
+.svg-div {
+    position: absolute;
+}
+
+.main-div {
+    position: relative;
+}
