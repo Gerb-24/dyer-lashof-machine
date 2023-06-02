@@ -1,6 +1,6 @@
 import { E_inf_operad } from "./main/E_inf.js";
 import { Lie_operad } from "./main/Lie.js";
-// import { E_n_operad } from "./main/E_n.js";
+import { E_n_operad } from "./main/E_n.js";
 
 
 const logText = () => {
@@ -31,14 +31,18 @@ const logText = () => {
         }
     });
 
-    // console.log(baseDegrees, baseOperations);
     if ( operadType === 'E_inf' ){
-        var [newData, edgesMap, dualEdgesMap] = E_inf_operad(baseDegrees, baseOperations, 15, 4)
+        var [newData, edgesMap, dualEdgesMap] = E_inf_operad(baseDegrees, baseOperations, maxDim, maxWeight);
     }
     if ( operadType === 'sLie' ){
-        var [newData, edgesMap, dualEdgesMap] = Lie_operad(baseDegrees, baseOperations, 15, 4)
+        var [newData, edgesMap, dualEdgesMap] = Lie_operad(baseDegrees, baseOperations, maxDim, maxWeight);
     }
-    // const [newData, edgesMap, dualEdgesMap] = E_n_operad(baseDegrees, baseOperations, 15, 4, 5)
+    if ( operadType === 'E_n' ){
+        let n_data = document.getElementById("n").value;
+        console.log(n_data)
+        var [newData, edgesMap, dualEdgesMap]  = E_n_operad(baseDegrees, baseOperations, maxDim, maxWeight, parseInt(n_data));
+    }
+    
     
     const degData = new Map([])
     for ( let [ index, obj] of newData.gens.entries()){

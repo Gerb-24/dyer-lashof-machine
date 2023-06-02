@@ -4,7 +4,7 @@ class Operation {
   constructor(power, node) {
     this.power = power;
     this.next = node;
-    this.degree = power + node.degree;
+    this.degree = power + 2*node.degree;
     this.weight = 2 * node.weight;
   }
 
@@ -122,7 +122,7 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
     }
 
     outputStr() {
-      return `\left [ ${this.next0.outputStr()},${this.next1.outputStr()} \\right ]`;
+      return `\\left. [ ${this.next0.outputStr()},${this.next1.outputStr()} \\right. ]`;
     }
 
     isEqual(other) {
@@ -227,12 +227,12 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
           let elt = ProductFunc(node1, node0);
           return elt;
         }
-
-        let elt = new Element([new Product(node0, node1)]);
-        return elt;
       }
+      let elt = new Element([new Product(node0, node1)]);
+      return elt;
     }
-    throw new Exception();
+    console.log( node0, node1 )
+    throw new Error();
   };
 
   const BrowderFunc = (node0, node1) => {
@@ -330,7 +330,7 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
       return elt;
     }
 
-    throw new Exception();
+    throw new Error();
   };
 
   const OperationFunc = (i, node) => {
@@ -389,7 +389,7 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
           elt0,
           ProductFunc(BrowderFunc(node.next0, node.next1), elt1)
         );
-        eltSum.push(topElt);
+        eltList.push(topElt);
       }
 
       return eltSum(eltList);
