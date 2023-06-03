@@ -80,12 +80,12 @@ const logText = () => {
         katex.render(n, btn, {
           throwOnError: false
         });
-        btn.addEventListener("click", function(i){return () => get_linked( i, edgesMap, dualEdgesMap, namesArr.length )}(i));
+        btn.addEventListener("click", function(i){return () => get_linked( i, edgesMap, dualEdgesMap, namesArr.length, newData.gens )}(i));
     }
     // console.log(edgesMap)
 }
 
-function get_linked( i, edgesMap, dualEdgesMap, l ){
+function get_linked( i, edgesMap, dualEdgesMap, l, data ){
 
     // first clean up all the colored elements
     for (let j =0; j<l; j++){
@@ -99,6 +99,26 @@ function get_linked( i, edgesMap, dualEdgesMap, l ){
     for ( let j of dualEdgesMap.get(i)){
         document.getElementById(j).style.background = '#a7dcfc'
     }
+    let s = [];
+    for ( let p in data[i].ops ){
+        let s_p = [];
+        for ( let j of data[i].ops[p] ) {
+            s_p.push( data[j].name )
+        }
+        s.push(`\\operatorname{Sq}_${p}(${data[i].name}) = ${s_p.join(' + ')}`)
+    }
+    if (s == ''){
+        console.log( 'hello' )
+        s = `\\text{ no squares on }${data[i].name}`
+    }
+    else {
+        s = s.join('\\text{,  }')
+    }
+    let out_p = document.getElementById('output')
+
+    katex.render(s, out_p, {
+        throwOnError: false
+      });
 }
 
 // first we bind logText to the buttons click listener
