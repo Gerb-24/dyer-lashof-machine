@@ -1,5 +1,13 @@
 import { combinations } from "./operad_functions.js";
 
+const range = (startValue, endValue) => {
+  const rangeArr = []
+  for( let i=startValue; i<endValue; i++ ){
+      rangeArr.push(i)
+  }
+  return rangeArr
+}
+
 const cartan = (i) => {
     let ans = [];
     for (let k = 0; k <= i; k++) {
@@ -37,4 +45,4 @@ const adem = (r, s) => {
   
 
   
-  export { cartan, nishida, adem };
+  export { range, cartan, nishida, adem };

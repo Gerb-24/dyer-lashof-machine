@@ -1,4 +1,4 @@
-import { cartan, ordered_cartan, adem, nishida } from "./E_n_functions.js";
+import { range, cartan, ordered_cartan, adem, nishida } from "./E_n_functions.js";
 
 class Operation {
   constructor(power, node) {
@@ -205,8 +205,8 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
         let index10 = operationOrder.findIndex((e) => node1.next0.isEqual(e));
         if (index0 < index10) {
           let elt0 = new Element([node1.next0]);
-
-          let elt = ProductFunc(node0, node1.next1);
+          
+          let elt = ProductFunc( elt0, ProductFunc(node0, node1.next1));
           return elt;
         }
 
@@ -405,7 +405,7 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
     throw new Error();
   };
 
-  const BrowderBasisFunc = () => {
+  const browderBasisFunc = () => {
     let generators = baseDegs.map((d, i) => new Generator(i, d));
     let weight = 1;
     while (weight < maxWeight) {
@@ -440,7 +440,7 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
     return generators;
   };
 
-  const OperationBasisFunc = (generators) => {
+  const operationBasisFunc = (generators) => {
     let operations = [...generators];
     while (operations.length) {
       let newOperations = [];
@@ -450,18 +450,12 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
         }
         let operationsList;
         if (node instanceof Operation) {
-          operationsList = Array.from(
-            {
-              length: Math.min(n - 1, maxDim - 2 * node.degree, node.power) + 1,
-            },
-            (_, i) => new Operation(i, node)
+          operationsList = range( 0, Math.min( n - 1, maxDim - 2*node.degree, node.power ) + 1 ).map( power =>
+            new Operation( power, node )
           );
         } else {
-          operationsList = Array.from(
-            {
-              length: Math.min(n - 1, maxDim - 2 * node.degree) + 1,
-            },
-            (_, i) => new Operation(i, node)
+          operationsList = range( 0, Math.min(  n - 1, maxDim - 2*node.degree ) + 1 ).map( power =>
+            new Operation( power, node )
           );
         }
         newOperations.push(...operationsList);
@@ -472,7 +466,7 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
     return generators;
   };
 
-  const ProductBasisFunc = (operationOrder) => {
+  const productBasisFunc = (operationOrder) => {
     let generators = [...operationOrder];
     let products = [...operationOrder];
     while (products.length) {
@@ -545,8 +539,8 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
     return [data, edgesMap, dualEdgesMap];
   };
 
-  const browderOrder = BrowderBasisFunc();
-  const operationOrder = OperationBasisFunc(browderOrder);
-  const monomials = ProductBasisFunc(operationOrder).slice(baseDegs.length);
+  const browderOrder = browderBasisFunc();
+  const operationOrder = operationBasisFunc(browderOrder);
+  const monomials = productBasisFunc(operationOrder).slice(baseDegs.length);
   return monomialsToData(monomials);
 }

@@ -108,7 +108,6 @@ function get_linked( i, edgesMap, dualEdgesMap, l, data ){
         s.push(`\\operatorname{Sq}_${p}(${data[i].name}) = ${s_p.join(' + ')}`)
     }
     if (s == ''){
-        console.log( 'hello' )
         s = `\\text{ no squares on }${data[i].name}`
     }
     else {

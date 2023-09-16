@@ -1,4 +1,4 @@
-import { cartan, nishida, adem } from "./E_inf_functions.js"
+import { range, cartan, nishida, adem } from "./E_inf_functions.js"
 
 class Operation {
   constructor(power, node) {
@@ -129,7 +129,7 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
     if (node instanceof Operation) {
       // nishida relations
       let elt_list = nishida(i, node.power).map(([a, b]) =>
-        Operation_func(a, Steenrod(b, node.next))
+        OperationFunc(a, Steenrod(b, node.next))
       );
       return eltSum(elt_list);
     }
@@ -137,7 +137,7 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
     if (node instanceof Product) {
       // cartan formula
       let elt_list = cartan(i).map(([a, b]) =>
-        Product_func(Steenrod(a, node.next0), Steenrod(b, node.next1))
+        ProductFunc(Steenrod(a, node.next0), Steenrod(b, node.next1))
       );
       return eltSum(elt_list);
     }
@@ -145,13 +145,13 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
     throw new Error()
   }
 
-  function Product_func(node_0, node_1) {
+  function ProductFunc(node_0, node_1) {
     if (node_0 instanceof Element && node_1 instanceof Element) {
       // bilinear
       let elt_list = [];
       for (let _node_0 of node_0.nodes) {
         for (let _node_1 of node_1.nodes) {
-          elt_list.push(Product_func(_node_0, _node_1));
+          elt_list.push(ProductFunc(_node_0, _node_1));
         }
       }
       return eltSum(elt_list);
@@ -159,7 +159,7 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
 
     if (node_0 instanceof Product) {
       let elt_0 = new Element([node_0.next0]);
-      let elt = Product_func(elt_0, Product_func(node_0.next1, node_1));
+      let elt = ProductFunc(elt_0, ProductFunc(node_0.next1, node_1));
       return elt;
     }
     if ([Operation, Generator].includes(node_0.constructor)) {
@@ -169,12 +169,12 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
           operationOrder.findIndex((e) => node_1.next0.isEqual(e))
         ) {
           let elt_0 = new Element([node_1.next0]);
-          let elt = Product_func(node_0, node_1.next1);
+          let elt = ProductFunc( elt_0, ProductFunc(node_0, node_1.next1));
           return elt;
         }
 
         if (node_0.isEqual(node_1.next0)) {
-          let elt = Product_func(
+          let elt = ProductFunc(
             new Operation(node_0.degree, node_0),
             node_1.next1
           );
@@ -192,7 +192,7 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
           operationOrder.findIndex((e) => node_0.isEqual(e)) <
           operationOrder.findIndex((e) => node_1.isEqual(e))
         ) {
-          let elt = Product_func(node_1, node_0);
+          let elt = ProductFunc(node_1, node_0);
           return elt;
         }
       }
@@ -203,10 +203,10 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
     throw new Error();
   }
 
-  function Operation_func(i, node) {
+  function OperationFunc(i, node) {
     if (node instanceof Element) {
       // additivity
-      let elt_list = node.nodes.map((_node) => Operation_func(i, _node));
+      let elt_list = node.nodes.map((_node) => OperationFunc(i, _node));
       return eltSum(elt_list);
     }
 
@@ -221,7 +221,7 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
       }
       // adem relation
       let elt_list = adem(i, node.power).map(([a, b]) =>
-        Operation_func(a, Operation_func(b, node.next))
+        OperationFunc(a, OperationFunc(b, node.next))
       );
       return eltSum(elt_list);
     }
@@ -229,9 +229,9 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
     if (node instanceof Product) {
       // cartan formula
       let elt_list = cartan(i).map(([a, b]) =>
-        Product_func(
-          Operation_func(a, node.next0),
-          Operation_func(b, node.next1)
+        ProductFunc(
+          OperationFunc(a, node.next0),
+          OperationFunc(b, node.next1)
         )
       );
       return eltSum(elt_list);
@@ -252,19 +252,12 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
         if (2 * node.weight > maxWeight) continue;
         let operationsList = [];
         if (node instanceof Operation) {
-          operationsList = Array.from(
-            {
-              length:
-                Math.min(maxDim - node.degree, 2 * node.power) -
-                node.degree +
-                1,
-            },
-            (_, i) => new Operation(i + node.degree, node)
+          operationsList = range( node.degree, Math.min( maxDim - node.degree, 2*node.power) + 1 ).map( power =>
+            new Operation( power, node )
           );
         } else {
-          operationsList = Array.from(
-            { length: maxDim - node.degree - node.degree + 1 },
-            (_, i) => new Operation(i + node.degree, node)
+          operationsList = range( node.degree, maxDim - node.degree + 1 ).map( power =>
+            new Operation( power, node )
           );
         }
         newOperations.push(...operationsList);
