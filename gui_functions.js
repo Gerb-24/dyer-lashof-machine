@@ -43,6 +43,7 @@ const logText = () => {
         var [newData, edgesMap, dualEdgesMap]  = E_n_operad(baseDegrees, baseOperations, maxDim, maxWeight, parseInt(n_data));
     }
     
+    outputMDF(newData)
     
     const degData = new Map([])
     for ( let [ index, obj] of newData.gens.entries()){
@@ -120,5 +121,42 @@ function get_linked( i, edgesMap, dualEdgesMap, l, data ){
       });
 }
 
+function outputMDF( newData ){
+    // console.log(newData.gens)
+    let ops_arr = []
+    let gens_arr = []
+    for ( let [ index, obj] of newData.gens.entries()){
+        gens_arr.push(obj.deg.toString())
+        for ( let pow in newData.gens[index].ops ){
+            let row_arr = [index.toString(), pow.toString(), newData.gens[index].ops[pow].length.toString()]
+            for ( let _index of newData.gens[index].ops[pow] ){
+                row_arr.push(_index.toString())
+            }
+            ops_arr.push(row_arr.join(' '))
+        }
+        
+    }
+    let ops_str = ops_arr.join('\n')
+    let gens_str = gens_arr.join(' ')
+    let ans_str = `${gens_arr.length}\n\n${gens_str}\n\n${ops_str}`
+    
+    document.getElementById('outputMDF').innerHTML = ans_str
+
+}
+
+function copyMDF(){
+    const text = document.getElementById("outputMDF").value
+    navigator.clipboard.writeText(text);
+}
+
+const initMDF = `2
+
+2 3
+
+1 1 1 0`
+document.getElementById("myText").innerHTML = initMDF
+
 // first we bind logText to the buttons click listener
 document.getElementById("myButton").addEventListener('click', logText)
+
+document.getElementById("copyMDF").addEventListener('click', copyMDF)

@@ -59,17 +59,20 @@
         <br>
         For example the line, if we were to have |x_5| = 5 and |x_2|=|x_3|=2, then the line '5 3 2 3 1' would specify that Sq_3(x_5) consists of two summands, that being x_3 and x_1.<br>
       </p>
-        <textarea id="myText" name="myText" rows="20" cols="30" >2
-
-2 3
-            
-1 1 1 0</textarea></div>
-        <button id="myButton">Log Text</button>
-        <h3>Output:</h3>
-        <p id="output" style="display: inline-block;"></p>
-        <h3>Generators:</h3>
-        <div class="f2-module" id="row" ></div>
-        <script type="module" src="./gui_functions.js"></script>
+      <div style="display: inline;">
+        <textarea id="myText" name="myText" rows="20" cols="30" ></textarea>
+        <button id="myButton" class="btn btn-primary">Compute</button>
+      </div>
+      <div style="display: inline;">
+        <textarea id="outputMDF" name="outputMDF" rows="20" cols="30"></textarea>
+        <button id="copyMDF" class="btn btn-primary">Copy MDF</button>
+      </div>
+      
+      <h3>Output:</h3>
+      <p id="output" style="display: inline-block;"></p>
+      <h3>Generators:</h3>
+      <div class="f2-module" id="row" ></div>
+      <script type="module" src="./gui_functions.js"></script>
 
     </body>
 </html>

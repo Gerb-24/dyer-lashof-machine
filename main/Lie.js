@@ -59,7 +59,7 @@ constructor(index, degree) {
 }
 
 toString() {
-    return `x_${this.index}`;
+    return `x_{${this.index}}`;
 }
 
 outputStr() {
@@ -289,11 +289,11 @@ export function Lie_operad(baseDegs, baseOps, maxDim, maxWeight) {
           }
           let operationsList;
           if (node instanceof Operation) {
-            operationsList = range( 2*node.power + 1, maxDim - node.degree ).map( power  => 
+            operationsList = range( 2*node.power + 1, maxDim - node.degree + 2 ).map( power  => 
               new Operation( power, node)
             );
           } else {
-            operationsList = range( node.degree, maxDim - node.degree ).map( power =>
+            operationsList = range( node.degree, maxDim - node.degree + 2 ).map( power =>
               new Operation( power, node )
             );
           }
