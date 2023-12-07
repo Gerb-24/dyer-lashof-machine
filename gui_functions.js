@@ -2,6 +2,21 @@ import { E_inf_operad } from "./main/E_inf.js";
 import { Lie_operad } from "./main/Lie.js";
 import { E_n_operad } from "./main/E_n.js";
 
+// We keep track of the which basiselements have squares to which other monomials
+var homologicalData = null;
+var cohomologicalData = null;
+
+// By default our output is homological
+var isHomological = true
+
+// By default we have the mod-2 Moore spectrum as input
+const initMDF = `2
+
+2 3
+
+1 1 1 0`
+document.getElementById("myText").innerHTML = initMDF
+
 
 const logText = () => {
     var text = document.getElementById("myText").value;
@@ -32,18 +47,21 @@ const logText = () => {
     });
 
     if ( operadType === 'E_inf' ){
-        var [newData, edgesMap, dualEdgesMap] = E_inf_operad(baseDegrees, baseOperations, maxDim, maxWeight);
+        var [newData, newDualData, edgesMap, dualEdgesMap] = E_inf_operad(baseDegrees, baseOperations, maxDim, maxWeight);
     }
     if ( operadType === 'sLie' ){
-        var [newData, edgesMap, dualEdgesMap] = Lie_operad(baseDegrees, baseOperations, maxDim, maxWeight);
+        var [newData, newDualData, edgesMap, dualEdgesMap] = Lie_operad(baseDegrees, baseOperations, maxDim, maxWeight);
     }
     if ( operadType === 'E_n' ){
         let n_data = document.getElementById("n").value;
         console.log(n_data)
-        var [newData, edgesMap, dualEdgesMap]  = E_n_operad(baseDegrees, baseOperations, maxDim, maxWeight, parseInt(n_data));
+        var [newData, newDualData, edgesMap, dualEdgesMap]  = E_n_operad(baseDegrees, baseOperations, maxDim, maxWeight, parseInt(n_data));
     }
+
+    homologicalData = newData
+    cohomologicalData = newDualData
     
-    outputMDF(newData)
+    outputMDF(homologicalData)
     
     const degData = new Map([])
     for ( let [ index, obj] of newData.gens.entries()){
@@ -101,9 +119,9 @@ function get_linked( i, edgesMap, dualEdgesMap, l, data ){
         document.getElementById(j).style.background = '#a7dcfc'
     }
     let s = [];
-    for ( let p in data[i].ops ){
+    for ( let p of data[i].ops.keys() ){
         let s_p = [];
-        for ( let j of data[i].ops[p] ) {
+        for ( let j of data[i].ops.get(p) ) {
             s_p.push( data[j].name )
         }
         s.push(`\\operatorname{Sq}_${p}(${data[i].name}) = ${s_p.join(' + ')}`)
@@ -121,15 +139,16 @@ function get_linked( i, edgesMap, dualEdgesMap, l, data ){
       });
 }
 
+
+
 function outputMDF( newData ){
-    // console.log(newData.gens)
     let ops_arr = []
     let gens_arr = []
     for ( let [ index, obj] of newData.gens.entries()){
         gens_arr.push(obj.deg.toString())
-        for ( let pow in newData.gens[index].ops ){
-            let row_arr = [index.toString(), pow.toString(), newData.gens[index].ops[pow].length.toString()]
-            for ( let _index of newData.gens[index].ops[pow] ){
+        for ( let pow of newData.gens[index].ops.keys() ){
+            let row_arr = [index.toString(), pow.toString(), newData.gens[index].ops.get(pow).length.toString()]
+            for ( let _index of newData.gens[index].ops.get(pow) ){
                 row_arr.push(_index.toString())
             }
             ops_arr.push(row_arr.join(' '))
@@ -149,14 +168,21 @@ function copyMDF(){
     navigator.clipboard.writeText(text);
 }
 
-const initMDF = `2
+function dualizeMDF(){
+    if (isHomological){
+        outputMDF(cohomologicalData)
+    }
+    else{
+        outputMDF(homologicalData)
+    }
+    isHomological = !isHomological
+    
+}
 
-2 3
-
-1 1 1 0`
-document.getElementById("myText").innerHTML = initMDF
 
 // first we bind logText to the buttons click listener
 document.getElementById("myButton").addEventListener('click', logText)
 
 document.getElementById("copyMDF").addEventListener('click', copyMDF)
+
+document.getElementById("dualize").addEventListener('click', dualizeMDF)

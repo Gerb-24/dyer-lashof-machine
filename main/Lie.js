@@ -311,7 +311,13 @@ export function Lie_operad(baseDegs, baseOps, maxDim, maxWeight) {
       let data_list = monomials.map((node) => ({
         name: node.outputStr(),
         deg: node.degree,
-        ops: {},
+        ops: new Map(),
+      }));
+  
+      let dual_data_list = monomials.map((node) => ({
+        name: node.outputStr(),
+        deg: node.degree,
+        ops: new Map(),
       }));
   
       let edgesMap = new Map();
@@ -332,16 +338,23 @@ export function Lie_operad(baseDegs, baseOps, maxDim, maxWeight) {
             console.log(` Sq_${i}: ${_node}: ${index}`);
             edgesMap.get(ind).push( index )
             dualEdgesMap.get(index).push( ind )
-            sq_list.push(index);
+            sq_list.push(index)
+            if (dual_data_list[index].ops.has(i)){
+              dual_data_list[index].ops.set( i, [...dual_data_list[index].ops.get(i), ind] )
+            }
+            else{
+              dual_data_list[index].ops.set( i, [ind])
+            }
           }
           if (sq_list.length) {
-            data_list[ind].ops[i] = sq_list;
+            data_list[ind].ops.set(i , sq_list);
           }
         }
       }
   
       let data = { gens: data_list };
-      return [data, edgesMap, dualEdgesMap]
+      let dual_data = {gens: dual_data_list};
+      return [data, dual_data, edgesMap, dualEdgesMap]
     }
 
   const bracketOrder = productBasisFunc();

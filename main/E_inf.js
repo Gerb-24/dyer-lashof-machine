@@ -304,9 +304,16 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
     let data_list = monomials.map((node) => ({
       name: node.outputStr(),
       deg: node.degree,
-      ops: {},
+      ops: new Map(),
     }));
 
+    let dual_data_list = monomials.map((node) => ({
+      name: node.outputStr(),
+      deg: node.degree,
+      ops: new Map(),
+    }));
+
+    // edgesMap is a map from each index of a generator to the indices to which it has squares
     let edgesMap = new Map();
     for (let i = 0; i < monomials.length; i++) {
       edgesMap.set(i, []);
@@ -326,15 +333,22 @@ export function E_inf_operad(baseDegs, baseOps, maxDim, maxWeight) {
           edgesMap.get(ind).push( index )
           dualEdgesMap.get(index).push( ind )
           sq_list.push(index);
+          if (dual_data_list[index].ops.has(i)){
+            dual_data_list[index].ops.set( i, [...dual_data_list[index].ops.get(i), ind] )
+          }
+          else{
+            dual_data_list[index].ops.set( i, [ind])
+          }
         }
         if (sq_list.length) {
-          data_list[ind].ops[i] = sq_list;
+          data_list[ind].ops.set(i , sq_list);
         }
       }
     }
 
     let data = { gens: data_list };
-    return [data, edgesMap, dualEdgesMap]
+    let dual_data = {gens: dual_data_list};
+    return [data, dual_data, edgesMap, dualEdgesMap]
   }
 
   const operationOrder = operationBasisFunc();
