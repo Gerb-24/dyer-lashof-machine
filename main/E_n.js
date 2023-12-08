@@ -265,14 +265,14 @@ export function E_n_operad(baseDegs, baseOps, maxDim, maxWeight, n) {
     if (node0 instanceof Operation && node0.power === n - 1) {
       // Adjoint identity
       let elt0 = new Element([node0.next]);
-      let elt = BrowderFunc(elt0, BrowderFunc(elt0, node1));
+      let elt = BrowderFunc(elt0, BrowderFunc(elt0, new Element([node1])));
       return elt;
     }
 
     if (node1 instanceof Operation && node1.power === n - 1) {
       // Adjoint identity
       let elt0 = new Element([node1.next]);
-      let elt = BrowderFunc(elt0, BrowderFunc(elt0, node0));
+      let elt = BrowderFunc(elt0, BrowderFunc(elt0, new Element([node0])));
       return elt;
     }
 

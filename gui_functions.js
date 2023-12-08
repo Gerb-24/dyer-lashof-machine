@@ -2,9 +2,11 @@ import { E_inf_operad } from "./main/E_inf.js";
 import { Lie_operad } from "./main/Lie.js";
 import { E_n_operad } from "./main/E_n.js";
 
+const emptyData = {gens: []}
+
 // We keep track of the which basiselements have squares to which other monomials
-var homologicalData = null;
-var cohomologicalData = null;
+var homologicalData = {...emptyData};
+var cohomologicalData = {...emptyData};
 
 // By default our output is homological
 var isHomological = true
@@ -19,22 +21,26 @@ document.getElementById("myText").innerHTML = initMDF
 
 
 const logText = () => {
+    isHomological = true
     var text = document.getElementById("myText").value;
     var operadType = document.querySelector('input[name="options"]:checked').id;
     var maxDim = document.getElementById("maxDim").value;
     var maxWeight = document.getElementById("maxWeight").value;
+
+    // we catch if something goes wrong in parsing the input mdf
     const lines = text.split('\n');
     const preGens = lines[2].split(' ');
     // create the list of generators with their degrees
     const data = { gens: [] };
     for (const x of preGens) {
-      data.gens.push({ deg: parseInt(x), ops: {} });
+    data.gens.push({ deg: parseInt(x), ops: {} });
     }
     
     const op_lines = lines.slice(4).map( op_line => op_line.split(' ') );
     for (const x of op_lines) {
         data.gens[parseInt(x[0])].ops[parseInt(x[1])] = x.slice(3).map(y => parseInt(y));
     }
+    
     
     //generate the baseDegrees and baseOperations out of the data
 
